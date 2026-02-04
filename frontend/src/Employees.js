@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "./api";
 
 export default function Employees() {
   const [form, setForm] = useState({
@@ -14,17 +14,21 @@ export default function Employees() {
   const [error, setError] = useState("");
 
   const fetchEmployees = async () => {
-    setLoading(true);
-    const res = await axios.get("http://localhost:8000/api/employees");
-    setEmployees(res.data);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const res = await api.get("/api/employees");
+      setEmployees(res.data);
+    } catch (err) {
+      setError("Failed to fetch employees");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchEmployees();
   }, []);
 
-  /* 🔍 VALIDATION */
   const isValidEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
@@ -43,7 +47,7 @@ export default function Employees() {
     }
 
     try {
-      await axios.post("http://localhost:8000/api/employees", form);
+      await api.post("/api/employees", form);
       alert("Employee added successfully");
 
       setForm({
@@ -65,7 +69,8 @@ export default function Employees() {
 
   const deleteEmployee = async (employeeId) => {
     if (!window.confirm("Delete this employee?")) return;
-    await axios.delete(`http://localhost:8000/api/employees/${employeeId}`);
+
+    await api.delete(`/api/employees/${employeeId}`);
     fetchEmployees();
   };
 
@@ -73,14 +78,7 @@ export default function Employees() {
     <div style={{ padding: "30px", maxWidth: "1000px", margin: "auto" }}>
       <h2>Employee Management</h2>
 
-      {/* ADD EMPLOYEE */}
-      <div
-        style={{
-          border: "1px solid #ddd",
-          padding: "15px",
-          marginBottom: "20px"
-        }}
-      >
+      <div style={{ border: "1px solid #ddd", padding: "15px", marginBottom: "20px" }}>
         <h3>Add Employee</h3>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
@@ -114,22 +112,14 @@ export default function Employees() {
         </div>
       </div>
 
-      {/* EMPLOYEE LIST */}
       <h3>Employee List</h3>
 
       {loading && <p>Loading...</p>}
 
-      {!loading && employees.length === 0 && (
-        <p>No employees found</p>
-      )}
+      {!loading && employees.length === 0 && <p>No employees found</p>}
 
       {employees.length > 0 && (
-        <table
-          width="100%"
-          border="2"
-          cellPadding="10"
-          style={{ borderCollapse: "collapse" }}
-        >
+        <table width="100%" border="2" cellPadding="10" style={{ borderCollapse: "collapse" }}>
           <thead style={{ background: "#f4f4f4" }}>
             <tr>
               <th>ID</th>
@@ -139,6 +129,7 @@ export default function Employees() {
               <th>Action</th>
             </tr>
           </thead>
+
           <tbody>
             {employees.map(emp => (
               <tr key={emp.employeeId}>
