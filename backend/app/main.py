@@ -86,3 +86,7 @@ def get_attendance(employee_id: str):
         r["fullName"] = employee["fullName"]
 
     return records
+
+
+# We can add more and more API's for this also
+
