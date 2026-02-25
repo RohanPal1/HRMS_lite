@@ -151,6 +151,7 @@ Common Errors & Fixes
 4) Attendance not showing
    • Ensure you are selecting the correct employeeId
    • Check backend endpoint /api/attendance/{employeeId}
+   
 
 Recommended Run Order
 Always run in this order:
