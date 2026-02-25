@@ -7,3 +7,5 @@ console.log("API BASE URL:", API_BASE_URL);
 export const api = axios.create({
     baseURL: API_BASE_URL,
 });
+
+// We can add code for every Functionality in Frontend
